@@ -219,43 +219,138 @@ def minimax(board):
     """
     # Returns the optimal action for the current player on the board.
     # """
+    def get_key(val):
+        for key, value in move_action_counter.items():
+            if val == value:
+                return key
     deep_board = deepcopy(board)
     possible_moves = []
     possible_defensive_moves = []
-    action_to_get_move = {}
-    import random
-
-    if player(board) == X:
-        score = float('-inf')
-        best_move = None
-        for moves in actions(board):
-            forl_board = deepcopy(board)
-            possible_moves.append(result(board,moves))
-            action_to_get_move.update({moves:result(board,moves)})
-        for defense in possible_moves:
-            forl2_board = deepcopy(board)
-            for action in actions(defense):
-                possible_defensive_moves.append(result(defense,action))
-        for move in action_to_get_move:
-                if board == [[EMPTY, EMPTY, O],[EMPTY, EMPTY, O],[EMPTY, EMPTY, EMPTY]]:
-                    return (2,2)
-                elif board == [[O, EMPTY, EMPTY],[O, EMPTY, EMPTY],[EMPTY, EMPTY, EMPTY]]:
-                    return (2,0)
-                elif board == [[EMPTY, O, EMPTY],[EMPTY, O, EMPTY],[EMPTY, EMPTY, EMPTY]]:
-                    return (1,1)
-                elif board == [[O, EMPTY, EMPTY],[EMPTY, O, EMPTY],[EMPTY, EMPTY, EMPTY]]:
-                    return (2,2)
-                elif board == [[EMPTY, EMPTY, O],[EMPTY, O, EMPTY],[EMPTY, EMPTY, EMPTY]]:
-                    return (2,0)
-                else:
-                    return random.choice(list(action_to_get_move.keys()))
+    action_to_get_move = []
+    score_for_each_move = {}
+    move_and_counter_move = {}
+    scores = []
+    
+    def evaluate(board):
+            row1 = board[0]
+            row2 = board[1]
+            row3 = board[2]
+            count = 0
+            CountO = 0
+            score = 0
             
-        
-    if O:
-        ...
+            if X == row1[0] and X == row2[1] and X == row3[2]:
+                score += 30
+            elif X == row1[2] and X == row2[1] and X == row3[0]:
+                score += 30
+            elif O == row1[0] and O == row2[1] and O == row3[2]:
+                score -= 30
+            elif O == row1[2] and O == row2[1] and O == row3[0]:
+                score -= 30
+            for i in row1:
+                if X == i:
+                    count +=1
+                    if count == 2:
+                        score+=10
+                    if count == 1:
+                        score += 5
+                if O == i:
+                    CountO +=1
+                    if CountO == 2:
+                        score += -10
+                    if CountO == 1:
+                        score +=-5
+         
+            for j in row2:
+                if X == j:
+                    count +=1
+                    if count == 2:
+                        score+=10
+                    if count == 1:
+                        score += 5
+                if O == j:
+                    CountO +=1
+                    if CountO == 2:
+                        score += -10
+                    elif CountO == 1:
+                        score +=-5
+            
+            for k in row3:
+                if X == k:
+                    count +=1
+                    if count == 2:
+                        score+=10
+                    if count == 1:
+                        score += 5
+                if O == k:
+                    CountO +=1
+                    if CountO == 2:
+                        score += -10
+                    if CountO == 1:
+                        score +=-5
+            if X == row1[0] and X == row2[0] or row2[0] == X and row3[0] == X:
+                score +=10
+            if X == row1[1] and X == row2[1] or row2[1] == X and row3[1] == X:
+                score +=10
+            if X == row1[2] and X == row2[2] or row2[2] == X and row3[2] == X:
+                score +=10
+            if X == row1[0] and X == row2[1]:
+                score +=10
+            if X == row1[2] and X == row2[1]:
+                score +=10 
+            if O == row1[0] and O == row2[1]:
+                score -=10
+            if O == row1[2] and O == row2[1]:
+                score -=10
+            if O == row1[0] and O == row2[0] or row2[0] == O and row3[0] == O:
+                score -=10
+            if O == row1[1] and O == row2[1] or row2[1] == O and row3[1] == O:
+                score -=10
+            if O == row1[2] and O == row2[2] or row2[2] == O and row3[2] == O:
+                score -=10
+            
+            return score
+    
     
 
-
+    moves = []
+    boards_ = []
+    move_action = {}
+    board_score = {}
+    counters = []
+    counter_score = {}
+    scores_C = []
+    scores_B = []
+    move_action_counter = {}
+    for move in actions(board):
+        moves.append(move)
+        boards_.append(result(board,move))
+        move_action.update({move:result(board,move)})
+  
+        for boards in boards_:
+            # board_score.update({evaluate(counter):boards})
+            for action in actions(boards):
+                counters.append(result(boards,action))
+                
+                for counter in counters:
+                    counter_score.update({evaluate(counter):counter})
+                    move_action_counter.update({action:counter})
+                    
+                for i in counter_score:
+                                
+                                scores_C.append(i)
+                                for scoring in scores_C:
+                                    if scoring > scoring:
+                                        scoring = scoring
+                                for scoring_les in scores_C:
+                                    if scoring < scoring:
+                                        scoring_les = scoring
+                                if scoring == max(scores_C) and player(board) == X:  
+                                    return get_key(counter_score[scoring]) 
+                                elif scoring_les == min(scores_C) and player(board) == O:  
+                                    return get_key(counter_score[scoring_les]) 
+                                
+            
 
 print(minimax([[EMPTY, EMPTY, EMPTY],
                [EMPTY, EMPTY, EMPTY],
